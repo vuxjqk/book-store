@@ -1,0 +1,11 @@
+.sidebar-transition {
+    transition: transform 0.3s ease-in-out;
+}
+
+.content-transition {
+    transition: margin-left 0.3s ease-in-out;
+}
+
+.scrollbar-hidden::-webkit-scrollbar {
+    display: none;
+}

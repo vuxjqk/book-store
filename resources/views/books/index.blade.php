@@ -2,9 +2,9 @@
     <x-slot name="header">
         <div class="flex justify-between items-center">
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                {{ __('Category') }}
+                {{ __('Book') }}
             </h2>
-            <x-create-button href="{{ route('categories.create') }}" text="Thêm danh mục" />
+            <x-create-button href="{{ route('books.create') }}" text="Thêm sách" />
         </div>
     </x-slot>
 
@@ -33,17 +33,17 @@
                             </x-tr>
                         </x-thead>
                         <x-tbody>
-                            @foreach ($categories as $category)
+                            @foreach ($books as $book)
                                 <x-tr>
-                                    <x-td>{{ $category->id }}</x-td>
-                                    <x-td>{{ $category->name }}</x-td>
-                                    <x-td>{{ $category->slug }}</x-td>
+                                    <x-td>{{ $book->id }}</x-td>
+                                    <x-td>{{ $book->name }}</x-td>
+                                    <x-td>{{ $book->slug }}</x-td>
                                     <x-td align="center">
                                         <x-button-group spacing="tight">
-                                            <x-show-button href="{{ route('categories.show', $category) }}" />
-                                            <x-edit-button href="{{ route('categories.edit', $category) }}" />
+                                            <x-show-button href="{{ route('books.show', $book) }}" />
+                                            <x-edit-button href="{{ route('books.edit', $book) }}" />
                                             <x-delete-button
-                                                onclick="deleteCategory('{{ route('categories.destroy', $category) }}')" />
+                                                onclick="deleteBook('{{ route('books.destroy', $book) }}')" />
                                         </x-button-group>
                                     </x-td>
                                 </x-tr>
@@ -57,7 +57,7 @@
 
     @push('scripts')
         <script>
-            function deleteCategory(url) {
+            function deleteBook(url) {
                 if (confirm('Bạn có chắc chắn muốn xóa danh mục này?')) {
                     fetch(url, {
                             method: 'DELETE',
