@@ -13,7 +13,7 @@
 
     <nav x-data="{ open: false }" class="mt-8 h-[calc(100vh-6rem)] overflow-y-auto scrollbar-hidden">
         <div class="px-6 py-3">
-            <h2 class="text-xs font-semibold text-gray-400 uppercase tracking-wide">Tổng quan</h2>
+            <h2 class="text-xs font-semibold text-gray-400 uppercase tracking-wide">{{ __('Overview') }}</h2>
         </div>
         <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
             <i class="fas fa-tachometer-alt mr-3"></i>
@@ -21,7 +21,7 @@
         </x-nav-link>
 
         <div class="px-6 py-3 mt-4">
-            <h2 class="text-xs font-semibold text-gray-400 uppercase tracking-wide">Quản lý</h2>
+            <h2 class="text-xs font-semibold text-gray-400 uppercase tracking-wide">{{ __('Management') }}</h2>
         </div>
         <x-nav-link :href="route('books.index')" :active="request()->routeIs('books.*')">
             <i class="fas fa-book mr-3"></i>
@@ -34,45 +34,44 @@
         <a href="#"
             class="flex items-center px-6 py-3 text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-200">
             <i class="fas fa-user-edit mr-3"></i>
-            Tác giả
+            {{ __('Author') }}
         </a>
         <a href="#"
             class="flex items-center px-6 py-3 text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-200">
             <i class="fas fa-shopping-cart mr-3"></i>
-            Đơn hàng
+            {{ __('Order') }}
         </a>
         <a href="#"
             class="flex items-center px-6 py-3 text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-200">
             <i class="fas fa-users mr-3"></i>
-            Khách hàng
+            {{ __('Customer') }}
         </a>
 
         <div class="px-6 py-3 mt-4">
-            <h2 class="text-xs font-semibold text-gray-400 uppercase tracking-wide">Báo cáo</h2>
+            <h2 class="text-xs font-semibold text-gray-400 uppercase tracking-wide">{{ __('Report') }}</h2>
         </div>
         <a href="#"
             class="flex items-center px-6 py-3 text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-200">
             <i class="fas fa-chart-bar mr-3"></i>
-            Thống kê
+            {{ __('Statistics') }}
         </a>
         <a href="#"
             class="flex items-center px-6 py-3 text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-200">
             <i class="fas fa-file-alt mr-3"></i>
-            Báo cáo
+            {{ __('Report') }}
         </a>
 
         <div class="px-6 py-3 mt-4">
-            <h2 class="text-xs font-semibold text-gray-400 uppercase tracking-wide">Hệ thống</h2>
+            <h2 class="text-xs font-semibold text-gray-400 uppercase tracking-wide">{{ __('System') }}</h2>
         </div>
-        <a href="#"
-            class="flex items-center px-6 py-3 text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-200">
+        <x-nav-link :href="route('setting')" :active="request()->routeIs('setting')">
             <i class="fas fa-cog mr-3"></i>
-            Cài đặt
-        </a>
+            {{ __('Setting') }}
+        </x-nav-link>
         <a href="#"
             class="flex items-center px-6 py-3 text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-200">
             <i class="fas fa-shield-alt mr-3"></i>
-            Phân quyền
+            {{ __('Permission') }}
         </a>
     </nav>
 </div>

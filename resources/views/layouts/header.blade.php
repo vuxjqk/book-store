@@ -43,8 +43,8 @@
                         <i class="fas fa-user mr-2"></i>
                         {{ __('Profile') }}
                     </a>
-                    <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                        <i class="fas fa-cog mr-2"></i>Setting
+                    <a href="{{ route('setting') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                        <i class="fas fa-cog mr-2"></i>{{ __('Setting') }}
                     </a>
                     <hr class="my-1">
                     <!-- Authentication -->

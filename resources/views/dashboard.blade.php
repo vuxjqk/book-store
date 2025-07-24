@@ -9,9 +9,9 @@
         <!-- Breadcrumb -->
         <div class="bg-gray-50 px-6 py-3 text-gray-700">
             <ol class="list-reset flex text-sm">
-                <li><a href="#" class="text-blue-600 hover:text-blue-800">Trang chủ</a></li>
+                <li><a href="#" class="text-blue-600 hover:text-blue-800">{{ __('Home') }}</a></li>
                 <li><span class="mx-2">/</span></li>
-                <li class="text-gray-500">Dashboard</li>
+                <li class="text-gray-500">{{ __('Dashboard') }}</li>
             </ol>
         </div>
 

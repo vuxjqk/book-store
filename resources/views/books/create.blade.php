@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Create book') }}
+            {{ __('Add New Book') }}
         </h2>
     </x-slot>
 
@@ -9,11 +9,12 @@
         <!-- Breadcrumb -->
         <div class="bg-gray-50 px-6 py-3 text-gray-700">
             <ol class="list-reset flex text-sm">
-                <li><a href="#" class="text-blue-600 hover:text-blue-800">Trang chủ</a></li>
+                <li><a href="#" class="text-blue-600 hover:text-blue-800">{{ __('Home') }}</a></li>
                 <li><span class="mx-2">/</span></li>
-                <li><a href="{{ route('books.index') }}" class="text-blue-600 hover:text-blue-800">Quản lý sách</a></li>
+                <li><a href="{{ route('books.index') }}"
+                        class="text-blue-600 hover:text-blue-800">{{ __('Book Management') }}</a></li>
                 <li><span class="mx-2">/</span></li>
-                <li class="text-gray-500">Thêm sách mới</li>
+                <li class="text-gray-500">{{ __('Add New Book') }}</li>
             </ol>
         </div>
 
@@ -22,17 +23,17 @@
             <!-- Header -->
             <div class="flex items-center justify-between mb-6">
                 <div>
-                    <h1 class="text-2xl font-bold text-gray-900">Thêm sách mới</h1>
-                    <p class="text-gray-600 mt-1">Nhập thông tin chi tiết về sách</p>
+                    <h1 class="text-2xl font-bold text-gray-900">{{ __('Add New Book') }}</h1>
+                    <p class="text-gray-600 mt-1">{{ __('Enter Book Details') }}</p>
                 </div>
                 <div class="flex space-x-3">
                     <a href="{{ route('books.index') }}"
                         class="px-4 py-2 text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 transition-colors duration-200">
-                        <i class="fas fa-times mr-2"></i>Hủy
+                        <i class="fas fa-times mr-2"></i>{{ __('Cancel') }}
                     </a>
                     <button type="button"
                         class="px-4 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors duration-200">
-                        <i class="fas fa-eye mr-2"></i>Xem trước
+                        <i class="fas fa-eye mr-2"></i>{{ __('Preview') }}
                     </button>
                 </div>
             </div>
@@ -45,7 +46,7 @@
                     <div class="lg:col-span-2">
                         <div class="bg-white rounded-lg shadow p-6 space-y-6">
                             <h3 class="text-lg font-semibold text-gray-900 border-b border-gray-200 pb-3">
-                                <i class="fas fa-info-circle mr-2 text-blue-500"></i>Thông tin cơ bản
+                                <i class="fas fa-info-circle mr-2 text-blue-500"></i>{{ __('Basic Information') }}
                             </h3>
 
                             <!-- Book Name -->
@@ -67,7 +68,7 @@
                                     <x-input-error :messages="$errors->get('author')" class="mt-2" />
                                 </div>
                                 <div>
-                                    <x-input-label for="publishing_house" :value="__('Publishing house')" />
+                                    <x-input-label for="publishing_house" :value="__('Publishing House')" />
                                     <x-text-input id="publishing_house" class="block mt-1 w-full" type="text"
                                         name="publishing_house" :value="old('publishing_house')" autocomplete="publishing_house" />
                                     <x-input-error :messages="$errors->get('publishing_house')" class="mt-2" />
@@ -112,7 +113,7 @@
                             <!-- Page Number, Size, Year -->
                             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                                 <div>
-                                    <x-input-label for="page_number" :value="__('Page number')" />
+                                    <x-input-label for="page_number" :value="__('Page Number')" />
                                     <x-text-input id="page_number" class="block mt-1 w-full" type="number"
                                         min="0" name="page_number" :value="old('page_number')"
                                         autocomplete="page_number" />
@@ -134,7 +135,7 @@
                                     <x-input-error :messages="$errors->get('size')" class="mt-2" />
                                 </div>
                                 <div>
-                                    <x-input-label for="year_of_publication" :value="__('Year of publication')" />
+                                    <x-input-label for="year_of_publication" :value="__('Year of Publication')" />
                                     <x-text-input id="year_of_publication" class="block mt-1 w-full" type="date"
                                         name="year_of_publication" :value="old('year_of_publication')"
                                         autocomplete="year_of_publication" />
@@ -147,7 +148,7 @@
                                 $cover_types = ['Bìa mềm', 'Bìa cứng', 'Bìa da'];
                             @endphp
                             <div>
-                                <x-input-label :value="__('Cover type')" />
+                                <x-input-label :value="__('Cover Type')" />
                                 <div class="flex flex-wrap gap-4">
                                     @foreach ($cover_types as $cover_type)
                                         <div class="flex items-center gap-2 mt-2">
@@ -164,16 +165,17 @@
                         <!-- Book Images Upload -->
                         <div class="bg-white rounded-lg shadow p-6 space-y-6 mt-6">
                             <h3 class="text-lg font-semibold text-gray-900 border-b border-gray-200 pb-3">
-                                <i class="fas fa-image mr-2 text-indigo-500"></i>Ảnh sách
+                                <i class="fas fa-image mr-2 text-indigo-500"></i>{{ __('Book Image') }}
                             </h3>
 
                             <div class="space-y-4">
                                 <div
                                     class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-gray-400 transition-colors duration-200">
                                     <i class="fas fa-cloud-upload-alt text-4xl text-gray-400 mb-4"></i>
-                                    <p class="text-gray-500 mb-2">Kéo thả ảnh vào đây hoặc</p>
+                                    <p class="text-gray-500 mb-2">{{ __('Drag and drop image here or') }}</p>
                                     <label class="cursor-pointer">
-                                        <span class="text-blue-600 hover:text-blue-800 font-medium">chọn file</span>
+                                        <span
+                                            class="text-blue-600 hover:text-blue-800 font-medium">{{ __('select file') }}</span>
                                         <input type="file" name="images[]" accept="image/*" multiple
                                             class="hidden" id="fileInput">
                                     </label>
@@ -194,7 +196,7 @@
                         <!-- Status -->
                         <div class="bg-white rounded-lg shadow p-6 space-y-6">
                             <h3 class="text-lg font-semibold text-gray-900 border-b border-gray-200 pb-3">
-                                <i class="fas fa-book mr-2 text-purple-500"></i>Danh mục
+                                <i class="fas fa-book mr-2 text-purple-500"></i>{{ __('Category') }}
                             </h3>
                             <div>
                                 <x-input-label for="categories" :value="__('Category')" />
@@ -214,13 +216,13 @@
                         <!-- Price and Stock -->
                         <div class="bg-white rounded-lg shadow p-6 space-y-6 mt-6">
                             <h3 class="text-lg font-semibold text-gray-900 border-b border-gray-200 pb-3">
-                                <i class="fas fa-dollar-sign mr-2 text-yellow-500"></i>Giá và tồn kho
+                                <i class="fas fa-dollar-sign mr-2 text-yellow-500"></i>{{ __('Price and Stock') }}
                             </h3>
 
                             <!-- Prices -->
                             <div class="space-y-4">
                                 <div>
-                                    <x-input-label for="original_price" :value="__('Original price')" />
+                                    <x-input-label for="original_price" :value="__('Original Price')" />
                                     <div class="relative">
                                         <x-text-input id="original_price" class="block mt-1 w-full" type="number"
                                             min="0" name="original_price" :value="old('original_price')"
@@ -230,7 +232,7 @@
                                     </div>
                                 </div>
                                 <div>
-                                    <x-input-label for="current_price" :value="__('Current price')" />
+                                    <x-input-label for="current_price" :value="__('Current Price')" />
                                     <div class="relative">
                                         <x-text-input id="current_price" class="block mt-1 w-full" type="number"
                                             min="0" name="current_price" :value="old('current_price')"
@@ -253,7 +255,7 @@
                         <!-- Status -->
                         <div class="bg-white rounded-lg shadow p-6 space-y-6 mt-6">
                             <h3 class="text-lg font-semibold text-gray-900 border-b border-gray-200 pb-3">
-                                <i class="fas fa-toggle-on mr-2 text-purple-500"></i>Trạng thái
+                                <i class="fas fa-toggle-on mr-2 text-purple-500"></i>{{ __('Status') }}
                             </h3>
                             @php
                                 $statuses = ['Đang bán', 'Tạm ngưng', 'Hết hàng', 'Ngừng kinh doanh'];
@@ -278,11 +280,11 @@
                 <div class="flex justify-end space-x-4 pt-6 border-t border-gray-200">
                     <a href="{{ route('books.index') }}"
                         class="px-6 py-2 text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 transition-colors duration-200">
-                        <i class="fas fa-times mr-2"></i>Hủy
+                        <i class="fas fa-times mr-2"></i>{{ __('Cancel') }}
                     </a>
                     <button type="button"
                         class="px-6 py-2 text-blue-700 bg-blue-100 rounded-lg hover:bg-blue-200 transition-colors duration-200">
-                        <i class="fas fa-save mr-2"></i>Lưu nháp
+                        <i class="fas fa-save mr-2"></i>{{ __('Save Draft') }}
                     </button>
                     <x-primary-button>
                         <i class="fas fa-plus mr-2"></i>
