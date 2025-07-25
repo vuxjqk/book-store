@@ -5,14 +5,13 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-
     <title>{{ config('app.name', 'Laravel') }}</title>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
 
-    <!-- Scripts -->
+    <!-- Styles -->
     @vite(['resources/css/app.css', 'resources/js/app.js', 'resources/css/style.css'])
 
     <!-- Font Awesome -->
@@ -22,11 +21,13 @@
 </head>
 
 <body class="font-sans antialiased">
-    <div class="min-h-screen bg-gray-100">
+    <div class="min-h-screen bg-gray-100 flex">
+        <!-- Sidebar -->
         @include('layouts.navigation')
 
-        <div id="main-content" class="lg:ml-64 content-transition">
-            <!-- Page Heading -->
+        <!-- Main Content -->
+        <div id="main-content" class="flex-1 lg:ml-64 content-transition">
+            <!-- Page Header -->
             @include('layouts.header')
 
             <!-- Page Content -->
@@ -34,59 +35,66 @@
                 {{ $slot }}
             </main>
         </div>
+
+        <!-- Mobile Backdrop -->
+        <div id="backdrop" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden lg:hidden"></div>
     </div>
 
-    <!-- Backdrop for mobile -->
-    <div id="backdrop" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden lg:hidden"></div>
-
+    <!-- Scripts -->
     @stack('scripts')
 
     <script>
-        // Sidebar toggle functionality
-        const sidebar = document.getElementById('sidebar');
-        const toggleBtn = document.getElementById('toggleSidebar');
-        const closeBtn = document.getElementById('closeSidebar');
-        const backdrop = document.getElementById('backdrop');
-        const mainContent = document.getElementById('main-content');
+        document.addEventListener('DOMContentLoaded', () => {
+            // DOM Elements
+            const elements = {
+                sidebar: document.getElementById('sidebar'),
+                toggleBtn: document.getElementById('toggleSidebar'),
+                closeBtn: document.getElementById('closeSidebar'),
+                backdrop: document.getElementById('backdrop'),
+                userMenuButton: document.getElementById('userMenuButton'),
+                userMenu: document.getElementById('userMenu')
+            };
 
-        function toggleSidebar() {
-            sidebar.classList.toggle('-translate-x-full');
-            backdrop.classList.toggle('hidden');
-        }
+            // Sidebar Toggle Functionality
+            const toggleSidebar = () => {
+                elements.sidebar.classList.toggle('-translate-x-full');
+                elements.backdrop.classList.toggle('hidden');
+            };
 
-        function closeSidebar() {
-            sidebar.classList.add('-translate-x-full');
-            backdrop.classList.add('hidden');
-        }
+            // Close Sidebar
+            const closeSidebar = () => {
+                elements.sidebar.classList.add('-translate-x-full');
+                elements.backdrop.classList.add('hidden');
+            };
 
-        toggleBtn.addEventListener('click', toggleSidebar);
-        closeBtn.addEventListener('click', closeSidebar);
-        backdrop.addEventListener('click', closeSidebar);
+            // Event Listeners for Sidebar
+            elements.toggleBtn?.addEventListener('click', toggleSidebar);
+            elements.closeBtn?.addEventListener('click', closeSidebar);
+            elements.backdrop?.addEventListener('click', closeSidebar);
 
-        // User menu toggle
-        const userMenuButton = document.getElementById('userMenuButton');
-        const userMenu = document.getElementById('userMenu');
+            // User Menu Toggle
+            elements.userMenuButton?.addEventListener('click', () => {
+                elements.userMenu.classList.toggle('hidden');
+            });
 
-        userMenuButton.addEventListener('click', function() {
-            userMenu.classList.toggle('hidden');
-        });
+            // Close User Menu on Outside Click
+            document.addEventListener('click', (event) => {
+                if (!elements.userMenuButton?.contains(event.target) &&
+                    !elements.userMenu?.contains(event.target)) {
+                    elements.userMenu.classList.add('hidden');
+                }
+            });
 
-        // Close user menu when clicking outside
-        document.addEventListener('click', function(event) {
-            if (!userMenuButton.contains(event.target) && !userMenu.contains(event.target)) {
-                userMenu.classList.add('hidden');
-            }
-        });
-
-        // Handle window resize
-        window.addEventListener('resize', function() {
-            if (window.innerWidth >= 1024) {
-                sidebar.classList.remove('-translate-x-full');
-                backdrop.classList.add('hidden');
-            } else {
-                sidebar.classList.add('-translate-x-full');
-                backdrop.classList.add('hidden');
-            }
+            // Handle Window Resize
+            window.addEventListener('resize', () => {
+                if (window.innerWidth >= 1024) {
+                    elements.sidebar.classList.remove('-translate-x-full');
+                    elements.backdrop.classList.add('hidden');
+                } else {
+                    elements.sidebar.classList.add('-translate-x-full');
+                    elements.backdrop.classList.add('hidden');
+                }
+            });
         });
     </script>
 </body>
