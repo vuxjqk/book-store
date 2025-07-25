@@ -32,73 +32,76 @@ class Book extends Model
         return $this->hasMany(BookImage::class);
     }
 
-    public function scopeFilter($query, $filters = [])
+    public function scopeFilter($query, array $filters)
     {
-        if (!empty($filters['search'])) {
-            $search = $filters['search'];
-            $query->where(function ($q) use ($search) {
+        $query->when($filters['search'] ?? null, function ($q, $search) {
+            $q->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
                     ->orWhere('author', 'like', "%{$search}%")
                     ->orWhere('description', 'like', "%{$search}%");
             });
-        }
+        });
 
-        if (!empty($filters['category_id'])) {
-            $query->whereHas('categories', function ($q) use ($filters) {
-                $q->whereIn('id', (array) $filters['category_id']);
-            });
-        }
+        $query->when(
+            $filters['category_id'] ?? null,
+            fn($q, $value) =>
+            $q->whereHas(
+                'categories',
+                fn($q) =>
+                $q->whereIn('id', (array) $value)
+            )
+        );
 
-        if (!empty($filters['min_price'])) {
-            $query->where('current_price', '>=', $filters['min_price']);
-        }
+        $query->when(
+            $filters['min_price'] ?? null,
+            fn($q, $value) =>
+            $q->where('current_price', '>=', $value)
+        );
 
-        if (!empty($filters['max_price'])) {
-            $query->where('current_price', '<=', $filters['max_price']);
-        }
+        $query->when(
+            $filters['max_price'] ?? null,
+            fn($q, $value) =>
+            $q->where('current_price', '<=', $value)
+        );
 
-        if (!empty($filters['language'])) {
-            $query->where('language', $filters['language']);
-        }
+        $query->when(
+            $filters['language'] ?? null,
+            fn($q, $value) =>
+            $q->where('language', $value)
+        );
 
-        if (!empty($filters['publishing_house'])) {
-            $query->where('publishing_house', 'like', "%{$filters['publishing_house']}%");
-        }
+        $query->when(
+            $filters['publishing_house'] ?? null,
+            fn($q, $value) =>
+            $q->where('publishing_house', 'like', "%{$value}%")
+        );
 
-        if (!empty($filters['year'])) {
-            $query->where('year_of_publication', $filters['year']);
-        }
+        $query->when(
+            $filters['year'] ?? null,
+            fn($q, $value) =>
+            $q->where('year_of_publication', $value)
+        );
 
-        if (!empty($filters['status'])) {
-            $query->where('status', $filters['status']);
-        }
+        $query->when(
+            $filters['status'] ?? null,
+            fn($q, $value) =>
+            $q->where('status', $value)
+        );
 
-        if (!empty($filters['in_stock']) && filter_var($filters['in_stock'], FILTER_VALIDATE_BOOLEAN)) {
+        if (filter_var($filters['in_stock'] ?? false, FILTER_VALIDATE_BOOLEAN)) {
             $query->where('stock', '>', 0);
         }
 
-        if (!empty($filters['sort_by'])) {
-            switch ($filters['sort_by']) {
-                case 'price_asc':
-                    $query->orderBy('current_price', 'asc');
-                    break;
-                case 'price_desc':
-                    $query->orderBy('current_price', 'desc');
-                    break;
-                case 'name_asc':
-                    $query->orderBy('name', 'asc');
-                    break;
-                case 'name_desc':
-                    $query->orderBy('name', 'desc');
-                    break;
-                case 'newest':
-                    $query->orderBy('year_of_publication', 'desc');
-                    break;
-                default:
-                    $query->orderBy('created_at', 'desc');
-                    break;
-            }
-        }
+        $query->when($filters['sort_by'] ?? null, function ($q, $sort) {
+            return match ($sort) {
+                'price_asc' => $q->orderBy('current_price'),
+                'price_desc' => $q->orderByDesc('current_price'),
+                'name_asc' => $q->orderBy('name'),
+                'name_desc' => $q->orderByDesc('name'),
+                'newest' => $q->orderByDesc('year_of_publication'),
+                default => $q->orderByDesc('created_at'),
+            };
+        });
 
         return $query;
     }

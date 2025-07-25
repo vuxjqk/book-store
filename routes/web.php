@@ -5,6 +5,7 @@ use App\Http\Controllers\BookController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
@@ -45,10 +46,13 @@ Route::get('/home/{book}', [HomeController::class, 'show'])->name('home.show');
 Route::get('/contact', [HomeController::class, 'contact'])->name('home.contact');
 Route::get('/promotions', [HomeController::class, 'promotions'])->name('home.promotions');
 
-Route::post('/cart/add/{id}', [CartController::class, 'add'])->name('cart.add');
+Route::post('/cart/store/{book}', [CartController::class, 'store'])->name('cart.store');
 Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
 Route::post('/cart/update', [CartController::class, 'update'])->name('cart.update');
 Route::post('/cart/remove/{id}', [CartController::class, 'remove'])->name('cart.remove');
 Route::get('/cart/payment', [CartController::class, 'payment'])->name('cart.payment');
+
+Route::get('/payment/return', [OrderController::class, 'handlePaymentReturn'])->name('payment.return');
+Route::post('/payment/ipn', [OrderController::class, 'handlePaymentIPN'])->name('payment.ipn');
 
 require __DIR__ . '/auth.php';

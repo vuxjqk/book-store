@@ -300,7 +300,7 @@
                                         <button class="p-2 text-gray-500 hover:text-red-500" title="Yêu thích">
                                             <i class="far fa-heart"></i>
                                         </button>
-                                        <button
+                                        <button onclick="add('{{ route('cart.store', $book) }}')"
                                             class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition duration-300">
                                             <i class="fas fa-cart-plus"></i>
                                         </button>
@@ -1261,6 +1261,29 @@
             function toggleMobileFilters() {
                 const sidebar = document.querySelector('.filter-sidebar');
                 sidebar.classList.toggle('hidden');
+            }
+
+            function add(url) {
+                fetch(url, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                            'Accept': 'application/json'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert(data.message);
+                            location.reload();
+                        } else {
+                            alert(data.message);
+                        }
+                    })
+                    .catch(error => {
+                        alert('Lỗi không xác định.');
+                        console.error(error);
+                    });
             }
         </script>
     @endpush

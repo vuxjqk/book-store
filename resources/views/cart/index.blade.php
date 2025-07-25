@@ -63,36 +63,49 @@
     @push('scripts')
         <script>
             // Sample cart data (for demonstration)
-            const initialCart = [{
-                    id: 1,
-                    title: "Đắc Nhân Tâm",
-                    author: "Dale Carnegie",
-                    price: 89000,
-                    quantity: 1,
-                    image: "fa-book-open"
-                },
-                {
-                    id: 2,
-                    title: "Nhà Giả Kim",
-                    author: "Paulo Coelho",
-                    price: 67000,
-                    quantity: 2,
-                    image: "fa-book-open"
-                },
-                {
-                    id: 3,
-                    title: "Tư Duy Nhanh Và Chậm",
-                    author: "Daniel Kahneman",
-                    price: 156000,
-                    quantity: 1,
-                    image: "fa-book-open"
-                }
-            ];
+            const rawCart = @json($cart);
+
+            const initialCart = Object.values(rawCart).map(item => ({
+                id: item.id,
+                title: item.name, // đổi từ 'name' sang 'title'
+                author: item.author,
+                price: parseInt(item.unit_price),
+                quantity: item.quantity,
+                image: item.image || "fa-book-open" // nếu thiếu ảnh thì dùng mặc định
+            }));
+
+            // 👉 bây giờ bạn có thể dùng cartItems để render giỏ hàng
+            // const initialCart = [{
+            //         id: 1,
+            //         title: "Đắc Nhân Tâm",
+            //         author: "Dale Carnegie",
+            //         price: 89000,
+            //         quantity: 1,
+            //         image: "fa-book-open"
+            //     },
+            //     {
+            //         id: 2,
+            //         title: "Nhà Giả Kim",
+            //         author: "Paulo Coelho",
+            //         price: 67000,
+            //         quantity: 2,
+            //         image: "fa-book-open"
+            //     },
+            //     {
+            //         id: 3,
+            //         title: "Tư Duy Nhanh Và Chậm",
+            //         author: "Daniel Kahneman",
+            //         price: 156000,
+            //         quantity: 1,
+            //         image: "fa-book-open"
+            //     }
+            // ];
 
             // Load cart from localStorage or initialize with sample data
             function loadCart() {
-                const savedCart = localStorage.getItem('cart');
-                return savedCart ? JSON.parse(savedCart) : initialCart;
+                // const savedCart = localStorage.getItem('cart');
+                // return savedCart ? JSON.parse(savedCart) : initialCart;
+                return initialCart;
             }
 
             function saveCart(cart) {
@@ -210,7 +223,7 @@
                 } else {
                     alert('Chuyển đến trang thanh toán...');
                     // In production, redirect to checkout page
-                    // window.location.href = 'checkout.php';
+                    window.location.href = '{{ route('cart.payment') }}';
                 }
             });
 

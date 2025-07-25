@@ -14,11 +14,6 @@
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }
 
-.book-card:hover {
-    transform: translateY(-5px);
-    transition: transform 0.3s ease;
-}
-
 .category-card:hover {
     transform: scale(1.05);
     transition: transform 0.3s ease;
@@ -26,7 +21,7 @@
 
 .book-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     transition: all 0.3s ease;
 }
 
@@ -147,22 +142,8 @@
     background-color: #eff6ff;
 }
 
-.input-field {
-    transition: border-color 0.3s ease;
-}
-
-.input-field:focus {
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-}
-
 .book-card {
     transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.book-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .add-to-cart {

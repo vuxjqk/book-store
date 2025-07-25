@@ -58,7 +58,8 @@
                     <a href="{{ route('cart.index') }}" class="relative">
                         <i class="fas fa-shopping-cart text-2xl {{ isActive(request()->routeIs('cart.index')) }}"></i>
                         <span
-                            class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">3</span>
+                            class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center"
+                            id="cartCount">0</span>
                     </a>
                     <i class="fas fa-user text-2xl text-gray-600 hover:text-blue-600 cursor-pointer"></i>
                     <div class="md:hidden">

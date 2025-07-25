@@ -120,7 +120,17 @@
         <script>
             // Load cart and user data
             function loadCart() {
-                return JSON.parse(localStorage.getItem('cart') || '[]');
+                const rawCart = @json($cart);
+
+                const initialCart = Object.values(rawCart).map(item => ({
+                    id: item.id,
+                    title: item.name, // đổi từ 'name' sang 'title'
+                    author: item.author,
+                    price: parseInt(item.unit_price),
+                    quantity: item.quantity,
+                    image: item.image || "fa-book-open" // nếu thiếu ảnh thì dùng mặc định
+                }));
+                return initialCart;
             }
 
             function loadUser() {
