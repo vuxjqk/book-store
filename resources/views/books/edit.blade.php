@@ -292,7 +292,7 @@
                         <i class="fas fa-save mr-2"></i>{{ __('Save Draft') }}
                     </button>
                     <x-primary-button>
-                        <i class="fas fa-save mr-2"></i>{{ __('Save') }}
+                        <i class="fas fa-save mr-2"></i>{{ __('Update') }}
                     </x-primary-button>
                 </div>
             </form>

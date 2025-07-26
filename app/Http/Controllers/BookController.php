@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\BooksExport;
 use App\Models\Book;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
@@ -9,6 +10,7 @@ use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Maatwebsite\Excel\Facades\Excel;
 
 class BookController extends Controller
 {
@@ -186,5 +188,10 @@ class BookController extends Controller
                 'message' => 'Đã xảy ra lỗi khi xóa sách.',
             ], 500);
         }
+    }
+
+    public function export()
+    {
+        return Excel::download(new BooksExport, 'books.xlsx');
     }
 }

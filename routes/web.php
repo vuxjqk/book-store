@@ -29,6 +29,8 @@ Route::middleware('auth')->group(function () {
 Route::get('/auth/{provider}', [SocialController::class, 'redirect']);
 Route::get('/auth/{provider}/callback', [SocialController::class, 'callback']);
 
+Route::get('/books/export', [BookController::class, 'export'])->name('books.export');
+
 Route::resource('categories', CategoryController::class);
 Route::resource('books', BookController::class);
 

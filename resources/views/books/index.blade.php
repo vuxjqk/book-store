@@ -24,10 +24,10 @@
                     <p class="text-gray-600 mt-1">{{ __('List of all books in the system') }}</p>
                 </div>
                 <div class="flex space-x-3">
-                    <button type="button"
+                    <a href="{{ route('books.export') }}"
                         class="px-4 py-2 text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 transition-colors duration-200">
                         <i class="fas fa-download mr-2"></i>{{ __('Export to Excel') }}
-                    </button>
+                    </a>
                     <a href="{{ route('books.create') }}"
                         class="px-4 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors duration-200">
                         <i class="fas fa-plus mr-2"></i>{{ __('Add New Book') }}
@@ -393,7 +393,7 @@
                                     }
                                 })
                                 .catch(error => {
-                                    alert('Lỗi không xác định khi xóa.');
+                                    alert('{{ __('Unknown error while deleting.') }}');
                                     console.error(error);
                                 });
                         }

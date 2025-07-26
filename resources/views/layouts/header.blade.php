@@ -31,6 +31,10 @@
                 </button>
             </div>
 
+            <div class="flex items-center">
+                <x-theme-toggle />
+            </div>
+
             <!-- User Menu -->
             <div class="relative">
                 <button id="userMenuButton"
