@@ -212,4 +212,9 @@ class CartController extends Controller
         $cart = session()->get('cart', []);
         return view('cart.payment', compact('cart'));
     }
+
+    public function success()
+    {
+        return view('cart.success');
+    }
 }

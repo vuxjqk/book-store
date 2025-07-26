@@ -73,7 +73,7 @@ class Book extends Model
         $query->when(
             $filters['publishing_house'] ?? null,
             fn($q, $value) =>
-            $q->where('publishing_house', 'like', "%{$value}%")
+            $q->where('publishing_house', $value)
         );
 
         $query->when(

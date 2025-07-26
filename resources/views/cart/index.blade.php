@@ -19,6 +19,39 @@
                 <div class="bg-white rounded-lg shadow-md p-6">
                     <div id="cartItems" class="space-y-6">
                         <!-- Cart items will be dynamically added here -->
+                        @foreach ($cart as $bookId => $item)
+                            <div class="cart-item flex items-center border-b border-gray-200 py-4">
+                                <div
+                                    class="w-16 h-16 bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center rounded">
+                                    @if (!empty($item['image']))
+                                        <img src="{{ asset('storage/' . $item['image']) }}"
+                                            alt="{{ __('Book Image') }}">
+                                    @else
+                                        <i class="fas ${item.image} text-2xl text-white"></i>
+                                    @endif
+                                </div>
+                                <div class="flex-1 ml-4">
+                                    <h3 class="text-lg font-semibold text-gray-800">{{ $item['name'] }}</h3>
+                                    <p class="text-gray-600 text-sm">{{ $item['author'] }}</p>
+                                    <p class="text-gray-600 text-sm">
+                                        {{ number_format($item['unit_price'], 0, ',', '.') }}₫</p>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <button class="quantity-btn decrease bg-gray-200 text-gray-600 px-2 py-1 rounded"
+                                        data-id="{{ $bookId }}">-</button>
+                                    <input type="number" value="{{ $item['quantity'] }}" min="1"
+                                        class="w-12 text-center border border-gray-300 rounded update-num"
+                                        data-id="{{ $bookId }}">
+                                    <button class="quantity-btn increase bg-gray-200 text-gray-600 px-2 py-1 rounded"
+                                        data-id="{{ $bookId }}">+</button>
+                                </div>
+                                <div class="ml-4 text-lg font-semibold text-gray-800">
+                                    {{ number_format($item['unit_price'] * $item['quantity'], 0, ',', '.') }}₫</div>
+                                <button class="remove-btn text-gray-500 ml-4" data-id="{{ $bookId }}">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </div>
+                        @endforeach
                     </div>
                     <div id="emptyCartMessage" class="text-center text-gray-600 py-8 hidden">
                         <p>Giỏ hàng của bạn đang trống. <a href="books.php" class="text-blue-600 hover:underline">Tiếp
@@ -62,173 +95,127 @@
 
     @push('scripts')
         <script>
-            // Sample cart data (for demonstration)
-            const rawCart = @json($cart);
+            document.addEventListener('DOMContentLoaded', () => {
 
-            const initialCart = Object.values(rawCart).map(item => ({
-                id: item.id,
-                title: item.name, // đổi từ 'name' sang 'title'
-                author: item.author,
-                price: parseInt(item.unit_price),
-                quantity: item.quantity,
-                image: item.image || "fa-book-open" // nếu thiếu ảnh thì dùng mặc định
-            }));
+                updateSummary()
 
-            // 👉 bây giờ bạn có thể dùng cartItems để render giỏ hàng
-            // const initialCart = [{
-            //         id: 1,
-            //         title: "Đắc Nhân Tâm",
-            //         author: "Dale Carnegie",
-            //         price: 89000,
-            //         quantity: 1,
-            //         image: "fa-book-open"
-            //     },
-            //     {
-            //         id: 2,
-            //         title: "Nhà Giả Kim",
-            //         author: "Paulo Coelho",
-            //         price: 67000,
-            //         quantity: 2,
-            //         image: "fa-book-open"
-            //     },
-            //     {
-            //         id: 3,
-            //         title: "Tư Duy Nhanh Và Chậm",
-            //         author: "Daniel Kahneman",
-            //         price: 156000,
-            //         quantity: 1,
-            //         image: "fa-book-open"
-            //     }
-            // ];
+                function updateSummary() {
+                    const totalItems = {{ collect(session('cart', []))->sum('quantity') }};
+                    const subtotal = {{ collect(session('cart', []))->sum('amount') }};
+                    const total = subtotal + 30000;
 
-            // Load cart from localStorage or initialize with sample data
-            function loadCart() {
-                // const savedCart = localStorage.getItem('cart');
-                // return savedCart ? JSON.parse(savedCart) : initialCart;
-                return initialCart;
-            }
+                    document.getElementById('totalItems').textContent = totalItems;
+                    document.getElementById('subtotal').textContent = subtotal.toLocaleString() + '₫';
+                    document.getElementById('total').textContent = total.toLocaleString() + '₫';
+                }
 
-            function saveCart(cart) {
-                localStorage.setItem('cart', JSON.stringify(cart));
-            }
+                function update(bookId, quantity) {
+                    const url = '{{ route('cart.update') }}';
+                    fetch(url, {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': document.querySelector(
+                                    'meta[name="csrf-token"]').getAttribute('content'),
+                                'Accept': 'application/json',
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                book_id: bookId,
+                                quantity: quantity
+                            })
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (!data.success) {
+                                alert(data.message);
+                            }
+                            location.reload();
+                        })
+                        .catch(error => {
+                            alert('{{ __('Unknown error while updating.') }}');
+                            console.error(error);
+                        });
+                }
 
-            // Render cart items
-            function renderCart() {
-                const cartItemsContainer = document.getElementById('cartItems');
-                const emptyCartMessage = document.getElementById('emptyCartMessage');
-                const cart = loadCart();
+                function remove(bookId) {
+                    const url = '{{ route('cart.remove') }}';
+                    fetch(url, {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': document.querySelector(
+                                    'meta[name="csrf-token"]').getAttribute('content'),
+                                'Accept': 'application/json',
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                book_id: bookId
+                            })
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (!data.success) {
+                                alert(data.message);
+                            }
+                            location.reload();
+                        })
+                        .catch(error => {
+                            alert('{{ __('Unknown error while deleting.') }}');
+                            console.error(error);
+                        });
+                }
 
-                cartItemsContainer.innerHTML = '';
-                if (cart.length === 0) {
-                    emptyCartMessage.classList.remove('hidden');
-                    cartItemsContainer.classList.add('hidden');
-                } else {
-                    emptyCartMessage.classList.add('hidden');
-                    cartItemsContainer.classList.remove('hidden');
-                    cart.forEach(item => {
-                        const itemElement = document.createElement('div');
-                        itemElement.className = 'cart-item flex items-center border-b border-gray-200 py-4';
-                        itemElement.innerHTML = `
-                        <div class="w-16 h-16 bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center rounded">
-                            <i class="fas ${item.image} text-2xl text-white"></i>
-                        </div>
-                        <div class="flex-1 ml-4">
-                            <h3 class="text-lg font-semibold text-gray-800">${item.title}</h3>
-                            <p class="text-gray-600 text-sm">${item.author}</p>
-                            <p class="text-gray-600 text-sm">${item.price.toLocaleString()}₫</p>
-                        </div>
-                        <div class="flex items-center space-x-2">
-                            <button class="quantity-btn decrease bg-gray-200 text-gray-600 px-2 py-1 rounded" data-id="${item.id}">-</button>
-                            <input type="number" value="${item.quantity}" min="1" class="w-12 text-center border border-gray-300 rounded" data-id="${item.id}">
-                            <button class="quantity-btn increase bg-gray-200 text-gray-600 px-2 py-1 rounded" data-id="${item.id}">+</button>
-                        </div>
-                        <div class="ml-4 text-lg font-semibold text-gray-800">${(item.price * item.quantity).toLocaleString()}₫</div>
-                        <button class="remove-btn text-gray-500 ml-4" data-id="${item.id}">
-                            <i class="fas fa-trash-alt"></i>
-                        </button>
-                    `;
-                        cartItemsContainer.appendChild(itemElement);
+                document.querySelectorAll('.update-num').forEach(input => {
+                    input.addEventListener('change', () => {
+                        // Implement update action
+                        const bookId = input.dataset.id;
+                        const quantity = input.value;
+                        update(bookId, quantity);
                     });
-                }
-                updateSummary();
-            }
+                });
 
-            // Update order summary
-            function updateSummary() {
-                const cart = loadCart();
-                const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
-                const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
-                const shipping = 30000;
-                const total = subtotal + shipping;
+                document.addEventListener('click', (e) => {
+                    if (e.target.classList.contains('increase') || e.target.classList.contains('decrease')) {
+                        const id = e.target.getAttribute('data-id');
+                        if (!id) return;
 
-                document.getElementById('totalItems').textContent = totalItems;
-                document.getElementById('subtotal').textContent = subtotal.toLocaleString() + '₫';
-                document.getElementById('total').textContent = total.toLocaleString() + '₫';
-                document.getElementById('cartCount').textContent = totalItems;
-            }
+                        const input = document.querySelector(`input[data-id="${id}"]`);
+                        if (!input) return;
 
-            // Handle quantity changes
-            document.addEventListener('click', (e) => {
-                const cart = loadCart();
-                const id = parseInt(e.target.dataset.id);
+                        let quantity = parseInt(input.value) || 0;
 
-                if (e.target.classList.contains('increase')) {
-                    const item = cart.find(item => item.id === id);
-                    if (item) {
-                        item.quantity++;
-                        saveCart(cart);
-                        renderCart();
+                        if (e.target.classList.contains('increase')) {
+                            quantity += 1;
+                        } else if (e.target.classList.contains('decrease')) {
+                            quantity = Math.max(quantity - 1, 0);
+                        }
+
+                        input.value = quantity;
+
+                        const bookId = parseInt(id);
+                        update(bookId, quantity);
                     }
-                }
 
-                if (e.target.classList.contains('decrease')) {
-                    const item = cart.find(item => item.id === id);
-                    if (item && item.quantity > 1) {
-                        item.quantity--;
-                        saveCart(cart);
-                        renderCart();
-                    }
-                }
-
-                if (e.target.classList.contains('remove-btn') || e.target.parentElement.classList.contains(
-                        'remove-btn')) {
-                    const newCart = cart.filter(item => item.id !== id);
-                    saveCart(newCart);
-                    renderCart();
-                }
-            });
-
-            // Handle quantity input changes
-            document.addEventListener('input', (e) => {
-                if (e.target.type === 'number') {
-                    const id = parseInt(e.target.dataset.id);
-                    const value = parseInt(e.target.value);
-                    if (value >= 1) {
-                        const cart = loadCart();
-                        const item = cart.find(item => item.id === id);
-                        if (item) {
-                            item.quantity = value;
-                            saveCart(cart);
-                            renderCart();
+                    const btn = e.target.closest('.remove-btn');
+                    if (btn) {
+                        if (confirm('{{ __('Are you sure you want to delete this product in cart?') }}')) {
+                            const id = btn.getAttribute('data-id');
+                            if (!id) return;
+                            const bookId = parseInt(id);
+                            remove(bookId);
                         }
                     }
-                }
-            });
+                });
 
-            // Handle checkout
-            document.getElementById('checkoutButton').addEventListener('click', () => {
-                const cart = loadCart();
-                if (cart.length === 0) {
-                    alert('Giỏ hàng của bạn đang trống!');
-                } else {
-                    alert('Chuyển đến trang thanh toán...');
-                    // In production, redirect to checkout page
-                    window.location.href = '{{ route('cart.payment') }}';
-                }
+                document.getElementById('checkoutButton').addEventListener('click', () => {
+                    if ({{ collect(session('cart', []))->sum('quantity') }} === 0) {
+                        alert('Giỏ hàng của bạn đang trống!');
+                    } else {
+                        alert('Chuyển đến trang thanh toán...');
+                        // In production, redirect to checkout page
+                        window.location.href = '{{ route('cart.payment') }}';
+                    }
+                });
             });
-
-            // Initialize cart
-            renderCart();
         </script>
     @endpush
 </x-guest-layout>

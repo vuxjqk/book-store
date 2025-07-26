@@ -15,7 +15,8 @@
     <!-- Main Content -->
     <div class="container mx-auto px-4 py-8">
         <h1 class="text-3xl font-bold text-gray-800 mb-8">Thanh Toán</h1>
-        <div class="flex flex-col lg:flex-row gap-8">
+        <form method="POST" action="{{ route('orders.store') }}" class="flex flex-col lg:flex-row gap-8">
+            @csrf
             <!-- Billing Information -->
             <div class="lg:w-2/3">
                 <div class="bg-white rounded-lg shadow-md p-6">
@@ -23,21 +24,21 @@
                     <div class="space-y-4">
                         <div>
                             <label for="billingName" class="block text-gray-600 mb-2">Họ và Tên</label>
-                            <input type="text" id="billingName"
+                            <input type="text" id="billingName" name="name"
                                 class="input-field w-full px-4 py-2 border border-gray-300 rounded focus:outline-none"
                                 placeholder="Nhập họ và tên">
                             <p id="billingNameError" class="error-message mt-1">Tên phải có ít nhất 2 ký tự</p>
                         </div>
                         <div>
                             <label for="billingAddress" class="block text-gray-600 mb-2">Địa chỉ giao hàng</label>
-                            <input type="text" id="billingAddress"
+                            <input type="text" id="billingAddress" name="shipping_address"
                                 class="input-field w-full px-4 py-2 border border-gray-300 rounded focus:outline-none"
                                 placeholder="Nhập địa chỉ">
                             <p id="billingAddressError" class="error-message mt-1">Địa chỉ không được để trống</p>
                         </div>
                         <div>
                             <label for="billingPhone" class="block text-gray-600 mb-2">Số điện thoại</label>
-                            <input type="text" id="billingPhone"
+                            <input type="text" id="billingPhone" name="phone"
                                 class="input-field w-full px-4 py-2 border border-gray-300 rounded focus:outline-none"
                                 placeholder="Nhập số điện thoại">
                             <p id="billingPhoneError" class="error-message mt-1">Số điện thoại không hợp lệ</p>
@@ -48,12 +49,12 @@
                             <div class="flex flex-col space-y-2">
                                 <div class="payment-method border border-gray-300 rounded p-4 cursor-pointer"
                                     data-method="cod">
-                                    <input type="radio" name="paymentMethod" value="cod" class="mr-2" checked>
+                                    <input type="radio" name="payment_method" value="cash" class="mr-2" checked>
                                     <span class="text-gray-800">Thanh toán khi nhận hàng (COD)</span>
                                 </div>
                                 <div class="payment-method border border-gray-300 rounded p-4 cursor-pointer"
                                     data-method="card">
-                                    <input type="radio" name="paymentMethod" value="card" class="mr-2">
+                                    <input type="radio" name="payment_method" value="card" class="mr-2">
                                     <span class="text-gray-800">Thẻ tín dụng/Thẻ ghi nợ</span>
                                 </div>
                             </div>
@@ -113,7 +114,7 @@
                     </button>
                 </div>
             </div>
-        </div>
+        </form>
     </div>
 
     @push('scripts')

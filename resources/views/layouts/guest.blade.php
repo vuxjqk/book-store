@@ -18,6 +18,11 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
         integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 </head>
 
 <body class="bg-gray-50">
@@ -46,7 +51,7 @@
                         class="{{ isActive(request()->routeIs('home.index')) }}">{{ __('All Books') }}</a>
                     <a href="#"
                         class="text-gray-600 hover:text-blue-600 transition duration-300">{{ __('Categories') }}</a>
-                    <a href="{{ route('home.promotions') }}"áo
+                    <a href="{{ route('home.promotions') }}"
                         class="{{ isActive(request()->routeIs('home.promotions')) }}">{{ __('Promotions') }}</a>
                     <a href="{{ route('home.contact') }}"
                         class="{{ isActive(request()->routeIs('home.contact')) }}">{{ __('Contact') }}</a>
@@ -55,19 +60,20 @@
                 <!-- Right Section -->
                 <div class="flex items-center space-x-4">
                     <!-- Search Bar -->
-                    <div class="relative hidden md:block">
-                        <input type="text" placeholder="{{ __('Search books...') }}"
-                            class="px-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:border-blue-500 w-64"
+                    <form action="{{ route('home.index') }}" class="relative hidden md:block">
+                        <input type="search" id="book-search" name="search" value="{{ request('search') }}"
+                            placeholder="{{ __('Search books...') }}"
+                            class="ps-4 pr-8 py-2 border border-gray-300 rounded-full focus:outline-none focus:border-blue-500 w-64"
                             aria-label="{{ __('Search') }}">
                         <i class="fas fa-search absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
-                    </div>
+                    </form>
 
                     <!-- Cart -->
                     <a href="{{ route('cart.index') }}" class="relative" aria-label="{{ __('Cart') }}">
                         <i class="fas fa-shopping-cart text-2xl {{ isActive(request()->routeIs('cart.index')) }}"></i>
                         <span
                             class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center"
-                            id="cartCount">0</span>
+                            id="cartCount">{{ collect(session('cart', []))->sum('quantity') }}</span>
                     </a>
 
                     <!-- User -->
@@ -181,6 +187,26 @@
                         });
                     }
                 });
+            });
+        });
+
+        $(document).ready(function() {
+            $('#book-search').autocomplete({
+                source: "{{ route('home.autocomplete') }}",
+                minLength: 2,
+                select: function(event, ui) {
+                    $('#book-search').val(ui.item.value);
+                    window.location.href = "{{ route('home.show', ['book' => '__ID__']) }}"
+                        .replace('__ID__', ui.item.id);
+                },
+                open: function(event, ui) {
+                    $('.ui-autocomplete').css('width', $('#book-search').outerWidth());
+                    $('.ui-autocomplete').addClass(
+                        'absolute z-50 w-64 mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-y-auto'
+                        );
+                    $('.ui-menu-item').addClass(
+                        'px-4 py-2 hover:bg-gray-100 cursor-pointer text-sm text-gray-700');
+                }
             });
         });
     </script>

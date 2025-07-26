@@ -11,7 +11,6 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Validator;
 
 class OrderController extends Controller
 {
@@ -25,10 +24,7 @@ class OrderController extends Controller
         $cart = session()->get('cart', []);
 
         if (empty($cart)) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Giỏ hàng trống!',
-            ], 400);
+            return redirect()->route('cart.index')->with('error', 'Giỏ hàng trống!');
         }
 
         $rules = [
@@ -42,25 +38,13 @@ class OrderController extends Controller
             $rules['phone'] = ['required', 'string', 'regex:/^(?:\+84|0)(3[2-9]|5[6|8|9]|7[0|6-9]|8[1-9]|9[0-4|6-9])[0-9]{7}$/'];
         }
 
-        $validator = Validator::make($request->all(), $rules);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'message' => $validator->errors()->first(),
-                'cart' => array_values($cart),
-            ], 422);
-        }
+        $request->validate($rules);
 
         $total = 0;
         foreach ($cart as $bookId => $item) {
             $book = Book::select('id', 'stock')->findOrFail($bookId);
             if ($book->stock < $item['quantity']) {
-                return response()->json([
-                    'success' => false,
-                    'message' => "Số lượng sách {$item['name']} trong kho không đủ!",
-                    'cart' => array_values($cart),
-                ], 400);
+                return redirect()->route('cart.index')->with('error', "Số lượng sách {$item['name']} trong kho không đủ!");
             }
             $total += $item['unit_price'] * $item['quantity'];
         }
@@ -124,18 +108,10 @@ class OrderController extends Controller
 
                 session()->forget('cart');
 
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Đơn hàng đã được tạo thành công!',
-                    'order_id' => $order->id,
-                ]);
+                return redirect()->route('cart.success')->with('success', 'Đơn hàng đã được tạo thành công! Mã đơn hàng: ' . $order->id);
             }, 5);
         } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Lỗi khi tạo đơn hàng: ' . $e->getMessage(),
-                'cart' => array_values($cart),
-            ], 500);
+            return redirect('/')->with('error', 'Lỗi khi tạo đơn hàng: ' . $e->getMessage());
         }
     }
 
