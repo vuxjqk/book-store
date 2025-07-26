@@ -23,9 +23,10 @@ class BookController extends Controller
             'status' => $request->input('status'),
         ];
 
+        $categories = Category::all();
         $books = Book::filter($filters)->paginate(10);
 
-        return view('books.index', compact('books', 'filters'));
+        return view('books.index', compact('books', 'categories', 'filters'));
     }
 
     /**

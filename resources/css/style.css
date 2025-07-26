@@ -10,7 +10,21 @@
     display: none;
 }
 
-.hero-gradient {
+@media print {
+    .no-print {
+        display: none !important;
+    }
+
+    body {
+        background: white !important;
+    }
+
+    .shadow {
+        box-shadow: none !important;
+    }
+}
+
+/* .hero-gradient {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }
 
@@ -156,4 +170,4 @@
 
 .banner {
     background: linear-gradient(to right, #3b82f6, #1d4ed8);
-}
+} */
