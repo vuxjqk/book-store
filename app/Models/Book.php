@@ -34,13 +34,18 @@ class Book extends Model
 
     public function scopeFilter($query, array $filters)
     {
-        $query->when($filters['search'] ?? null, function ($q, $search) {
-            $q->where(function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                    ->orWhere('author', 'like', "%{$search}%")
-                    ->orWhere('description', 'like', "%{$search}%");
-            });
-        });
+        $query->when(
+            $filters['search'] ?? null,
+            function ($q, $search) {
+                $q->where(
+                    function ($q) use ($search) {
+                        $q->where('name', 'like', "%{$search}%")
+                            ->orWhere('author', 'like', "%{$search}%")
+                            ->orWhere('description', 'like', "%{$search}%");
+                    }
+                );
+            }
+        );
 
         $query->when(
             $filters['category_id'] ?? null,

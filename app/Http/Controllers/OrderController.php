@@ -14,9 +14,16 @@ use Illuminate\Support\Facades\DB;
 
 class OrderController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return view('orders.index');
+        $filters = [
+            'search' => $request->input('search'),
+            'status' => $request->input('status'),
+            'order_date' => $request->input('order_date'),
+        ];
+
+        $orders = Order::filter($filters)->paginate(10);
+        return view('orders.index', compact('orders', 'filters'));
     }
 
     public function store(Request $request)
@@ -113,6 +120,91 @@ class OrderController extends Controller
         } catch (\Exception $e) {
             return redirect('/')->with('error', 'Lỗi khi tạo đơn hàng: ' . $e->getMessage());
         }
+    }
+
+    public function show(Order $order)
+    {
+        $order->load(['user', 'order_details.book']);
+
+        return response()->json([
+            'success' => true,
+            'order' => $order,
+        ]);
+    }
+
+    public function confirm(Request $request, Order $order)
+    {
+        if ($order->status === 'cancelled') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Cannot update a cancelled order.'
+            ]);
+        }
+
+        $statusFlow = ['pending', 'processing', 'shipped', 'delivered'];
+        $currentIndex = array_search($order->status, $statusFlow);
+
+        if ($currentIndex === false || $currentIndex >= count($statusFlow) - 1) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Cannot update status further.'
+            ]);
+        }
+
+        $order->update([
+            'status' => $statusFlow[$currentIndex + 1],
+            // 'cancelled_at' => null // clear nếu đã từng bị hủy
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Order status updated to ' . $order->status,
+            'new_status' => $order->status,
+        ]);
+    }
+
+    public function cancel(Request $request, Order $order)
+    {
+        // Không cho hủy nếu đã giao hàng
+        if (in_array($order->status, ['shipped', 'delivered'])) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Cannot cancel a shipped or delivered order.'
+            ]);
+        }
+
+        // Nếu đang ở trạng thái cancelled -> phục hồi nếu chưa quá 5 phút
+        if ($order->status === 'cancelled') {
+            if ($order->cancelled_at && now()->diffInMinutes($order->cancelled_at) <= 5) {
+                $order->update([
+                    'status' => 'pending',
+                    // 'cancelled_at' => null,
+                ]);
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Order restored to pending.',
+                    'new_status' => 'pending',
+                ]);
+            } else {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Restore period expired.',
+                ]);
+            }
+        }
+
+        // Hủy đơn
+        $order->update([
+            'status' => 'cancelled',
+            // 'cancelled_at' => now(),
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Order cancelled.',
+            'new_status' => 'cancelled',
+        ]);
     }
 
     public function handlePaymentIPN(Request $request)

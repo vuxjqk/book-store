@@ -26,11 +26,14 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+Route::post('/orders/confirm/{order}', [OrderController::class, 'confirm'])->name('orders.confirm');
+Route::post('/orders/cancel/{order}', [OrderController::class, 'cancel'])->name('orders.cancel');
 Route::get('/auth/{provider}', [SocialController::class, 'redirect']);
 Route::get('/auth/{provider}/callback', [SocialController::class, 'callback']);
 
 Route::get('/books/export', [BookController::class, 'export'])->name('books.export');
 
+Route::resource('orders', OrderController::class);
 Route::resource('categories', CategoryController::class);
 Route::resource('books', BookController::class);
 
@@ -54,7 +57,6 @@ Route::post('/cart/update', [CartController::class, 'update'])->name('cart.updat
 Route::post('/cart/remove', [CartController::class, 'remove'])->name('cart.remove');
 Route::get('/cart/payment', [CartController::class, 'payment'])->name('cart.payment');
 
-Route::resource('orders', OrderController::class);
 Route::get('/cart/success', [CartController::class, 'success'])->name('cart.success');
 
 

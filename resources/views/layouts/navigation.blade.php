@@ -39,7 +39,7 @@
             <i class="fas fa-user-edit mr-3"></i>
             {{ __('Authors') }}
         </x-nav-link>
-        <x-nav-link :href="url('#')" :active="request()->routeIs('v')">
+        <x-nav-link :href="route('orders.index')" :active="request()->routeIs('orders.*')">
             <i class="fas fa-shopping-cart mr-3"></i>
             {{ __('Orders') }}
         </x-nav-link>
