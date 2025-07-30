@@ -11,10 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('book_category', function (Blueprint $table) {
+        Schema::create('reviews', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
             $table->foreignId('book_id')->constrained('books')->cascadeOnDelete();
-            $table->foreignId('category_id')->constrained('categories')->cascadeOnDelete();
-            $table->primary(['book_id', 'category_id']);
+            $table->unsignedTinyInteger('rating')->nullable();
+            $table->checkConstraint('rating >= 1 AND rating <= 5', 'rating_range');
+            $table->text('comment')->nullable();
+            $table->unique(['user_id', 'book_id']);
             $table->timestamps();
         });
     }
@@ -24,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('book_category');
+        Schema::dropIfExists('reviews');
     }
 };

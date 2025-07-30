@@ -13,19 +13,19 @@ return new class extends Migration
     {
         Schema::create('books', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->unique();
-            $table->string('author')->nullable();
-            $table->string('publishing_house')->nullable();
-            $table->string('language')->nullable();
-            $table->string('status')->nullable();
-            $table->decimal('current_price', 15, 0)->default(0);
-            $table->decimal('original_price', 15, 0)->default(0);
+            $table->string('title', 150)->unique();
+            $table->string('author', 100)->nullable();
+            $table->string('publisher', 100)->nullable();
+            $table->enum('language', ['Vietnamese', 'English', 'French', 'Spanish', 'Other'])->nullable();
+            $table->enum('status', ['Available', 'OutOfStock', 'PreOrder', 'Discontinued'])->nullable();
+            $table->decimal('current_price', 15, 2)->default(0.00);
+            $table->decimal('original_price', 15, 2)->default(0.00);
             $table->text('description')->nullable();
-            $table->integer('page_number')->default(0);
-            $table->string('size')->nullable();
-            $table->date('year_of_publication')->nullable();
-            $table->string('cover_type')->nullable();
-            $table->integer('stock')->default(0);
+            $table->integer('page_count')->unsigned()->default(0);
+            $table->string('dimensions', 50)->nullable();
+            $table->date('published_date')->nullable();
+            $table->enum('cover_type', ['Hardcover', 'Paperback', 'Ebook'])->nullable();
+            $table->integer('stock_quantity')->unsigned()->default(0);
             $table->timestamps();
         });
     }

@@ -32,6 +32,16 @@ class Book extends Model
         return $this->hasMany(BookImage::class);
     }
 
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
+    }
+
+    public function averageRating()
+    {
+        return $this->reviews()->avg('rating') ?? 0;
+    }
+
     public function scopeFilter($query, array $filters)
     {
         $query->when(

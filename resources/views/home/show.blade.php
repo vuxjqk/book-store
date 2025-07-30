@@ -1,4 +1,4 @@
-<x-guest-layout>
+b<x-guest-layout>
     @php
         // Hàm format tiền tệ
         function formatCurrency($amount)
@@ -129,7 +129,7 @@
             <h2 class="text-2xl font-bold text-gray-800 mb-6">Bình luận & Đánh giá</h2>
 
             <!-- Review Form -->
-            <div class="mb-8">
+            <form id="review-form" class="mb-8">
                 <h3 class="text-lg font-semibold text-gray-800 mb-4">Viết đánh giá của bạn</h3>
                 <div class="mb-4">
                     <label class="block text-gray-600 mb-2">Đánh giá:</label>
@@ -149,15 +149,15 @@
                 </div>
                 <div class="mb-4">
                     <label for="reviewComment" class="block text-gray-600 mb-2">Bình luận:</label>
-                    <textarea id="reviewComment"
+                    <textarea id="reviewComment" name="comment"
                         class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500" rows="4"
                         placeholder="Nhập bình luận của bạn"></textarea>
                 </div>
-                <button id="submitReview"
+                <button type="submit"
                     class="bg-blue-600 text-white px-6 py-3 rounded hover:bg-blue-700 transition duration-300">
                     Gửi đánh giá
                 </button>
-            </div>
+            </form>
 
             <!-- Comments List -->
             <div id="commentsList" class="space-y-4">
@@ -197,58 +197,87 @@
 
     @push('scripts')
         <script>
-            // Star rating functionality
-            const stars = document.querySelectorAll('#starRating .fa-star');
-            let selectedRating = 0;
+            document.addEventListener('DOMContentLoaded', function() {
+                const form = document.getElementById('review-form');
 
-            stars.forEach(star => {
-                star.addEventListener('click', function() {
-                    selectedRating = parseInt(this.dataset.value);
-                    stars.forEach(s => {
-                        s.classList.toggle('active', parseInt(s.dataset.value) <= selectedRating);
-                    });
+                form.addEventListener('submit', async function(e) {
+                    e.preventDefault(); // Ngăn form submit mặc định (refresh trang)
+
+                    const content = document.getElementById('reviewComment').value;
+                    const url = "{{ route('reviews.store', ['bookId' => $book->id]) }}";
+
+                    fetch(url, {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
+                                    .getAttribute('content'),
+                                'Accept': 'application/json',
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                content
+                            })
+                        })
+                        .then(res => res.json())
+                        .then(data => {
+                            console.log(data);
+                            location.reload();
+                        })
+                        .catch(error => console.error('Lỗi:', error));
                 });
             });
+            // Star rating functionality
+            // const stars = document.querySelectorAll('#starRating .fa-star');
+            // let selectedRating = 0;
 
-            // Submit review
-            document.getElementById('submitReview').addEventListener('click', function() {
-                const name = document.getElementById('reviewName').value.trim();
-                const comment = document.getElementById('reviewComment').value.trim();
+            // stars.forEach(star => {
+            //     star.addEventListener('click', function() {
+            //         selectedRating = parseInt(this.dataset.value);
+            //         stars.forEach(s => {
+            //             s.classList.toggle('active', parseInt(s.dataset.value) <= selectedRating);
+            //         });
+            //     });
+            // });
 
-                if (!name || !comment || selectedRating === 0) {
-                    alert('Vui lòng nhập tên, bình luận và chọn số sao đánh giá.');
-                    return;
-                }
+            // // Submit review
+            // document.getElementById('submitReview').addEventListener('click', function() {
+            //     const name = document.getElementById('reviewName').value.trim();
+            //     const comment = document.getElementById('reviewComment').value.trim();
 
-                const commentsList = document.getElementById('commentsList');
-                const commentCard = document.createElement('div');
-                commentCard.className = 'comment-card bg-gray-50 p-4 rounded-lg';
+            //     if (!name || !comment || selectedRating === 0) {
+            //         alert('Vui lòng nhập tên, bình luận và chọn số sao đánh giá.');
+            //         return;
+            //     }
 
-                const starIcons = Array.from({
-                        length: 5
-                    }, (_, i) =>
-                    `<i class="fas fa-star ${i < selectedRating ? 'text-yellow-400' : 'text-gray-400'}"></i>`
-                ).join('');
+            //     const commentsList = document.getElementById('commentsList');
+            //     const commentCard = document.createElement('div');
+            //     commentCard.className = 'comment-card bg-gray-50 p-4 rounded-lg';
 
-                commentCard.innerHTML = `
-                <div class="flex items-center mb-2">
-                    <div class="text-yellow-400">
-                        ${starIcons}
-                    </div>
-                    <span class="text-gray-500 text-sm ml-2">${name}</span>
-                    <span class="text-gray-400 text-sm ml-auto">${new Date().toLocaleDateString('vi-VN')}</span>
-                </div>
-                <p class="text-gray-600">${comment}</p>
-            `;
+            //     const starIcons = Array.from({
+            //             length: 5
+            //         }, (_, i) =>
+            //         `<i class="fas fa-star ${i < selectedRating ? 'text-yellow-400' : 'text-gray-400'}"></i>`
+            //     ).join('');
 
-                commentsList.prepend(commentCard);
+            //     commentCard.innerHTML = `
+    //     <div class="flex items-center mb-2">
+    //         <div class="text-yellow-400">
+    //             ${starIcons}
+    //         </div>
+    //         <span class="text-gray-500 text-sm ml-2">${name}</span>
+    //         <span class="text-gray-400 text-sm ml-auto">${new Date().toLocaleDateString('vi-VN')}</span>
+    //     </div>
+    //     <p class="text-gray-600">${comment}</p>
+    // `;
 
-                // Reset form
-                document.getElementById('reviewName').value = '';
-                document.getElementById('reviewComment').value = '';
-                stars.forEach(s => s.classList.remove('active'));
-                selectedRating = 0;
-            });
+            //     commentsList.prepend(commentCard);
+
+            //     // Reset form
+            //     document.getElementById('reviewName').value = '';
+            //     document.getElementById('reviewComment').value = '';
+            //     stars.forEach(s => s.classList.remove('active'));
+            //     selectedRating = 0;
+            // });
         </script>
     @endpush
 </x-guest-layout>
